@@ -6,18 +6,24 @@ from src.vacancy import Vacancy
 def user_interaction():
     # Создаем пустой список вакансий
     vacancies = []
-
     print("Приветствуем Вас на сервисе подбора вакансий")
-    vacancy_title_user = input("Введите название интересующей профессии")
 
-    # Создаем экземпляры классов для работы с API
-    hh_api = HeadHunterAPI(vacancy_title_user)
-    sj_api = SuperJobAPI(vacancy_title_user)
+    while True:
+        vacancy_title_user = input("Введите название интересующей профессии\n")
 
-    # Наполняем список вакансий вакансиями, полученными от API
-    for api in (hh_api, sj_api):
-        api.get_vacancies(pages_count=1)
-        vacancies.extend(api.get_form_vacancies())
+        # Создаем экземпляры классов для работы с API
+        hh_api = HeadHunterAPI(vacancy_title_user)
+        sj_api = SuperJobAPI(vacancy_title_user)
+
+        # Наполняем список вакансий вакансиями, полученными от API
+        for api in (hh_api, sj_api):
+            api.get_vacancies(pages_count=3)
+            vacancies.extend(api.get_form_vacancies())
+
+        if len(vacancies) == 0:
+            print("Извините, по Вашему запросу вакансий не найдено\n")
+            continue
+        break
 
     # Создаем экземпляры класса JSONSaver и TXTSaver для сохранения найденных вакансий в файл
     js_saver = JSONSaver('vacancies.json')
